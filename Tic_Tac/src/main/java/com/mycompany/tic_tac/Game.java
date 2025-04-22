@@ -7,6 +7,8 @@ package com.mycompany.tic_tac;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  *
@@ -35,6 +37,7 @@ public class Game {
     String joueur2;
     String NomjoueurActuel;
     boolean gameover=false;
+    boolean overcondition;
     int turns;
     int score1=0,score2=0;
     
@@ -94,7 +97,7 @@ public class Game {
                     public void actionPerformed(ActionEvent e) {
                         if(gameover) return;
                        JButton tile=(JButton)e.getSource();
-                        /*if(tile.getText().equals("")){   //cette condition permet de ne pas jouer d facon indeterminer
+                        if(tile.getText().equals("")){   //cette condition permet de ne pas jouer d facon indeterminer
                            tile.setText(joueurActuel);
                            turns++;
                            CheckVainqueur();
@@ -110,8 +113,8 @@ public class Game {
                            text.setText(NomjoueurActuel+ "'s turn.");
                        }
                            
-                       }*/
-                    tile.setText(joueurActuel);
+                       }
+                    /*tile.setText(joueurActuel);
                     turns++;
                     CheckVainqueur();
                     if(!gameover){
@@ -124,7 +127,7 @@ public class Game {
                             NomjoueurActuel=joueur1;
                         }
                         text.setText(NomjoueurActuel+ "'s turn.");
-                    }
+                    }*/
                        
                     }
                 });         
@@ -141,15 +144,21 @@ public class Game {
             if (boutton[i][0].getText()==boutton[i][1].getText() && boutton[i][1].getText()==boutton[i][2].getText()) {
                 if(boutton[i][0].getText().equals("X")){
                     score1++;
+                    setGoal(joueur1);
                 }
                 else{
-                   score2++; 
+                   score2++;
+                   setGoal(joueur2);
                 }
-                for (int j = 0; j < boutton.length; j++) {
+                /*for (int j = 0; j < boutton.length; j++) {
                     setVainqueur(boutton[i][j]);
-                }
+                }*/
+                
                 /*gameover=true;
                 return;*/
+                boutton[i][0].setText("");
+                boutton[i][1].setText("");
+                boutton[i][2].setText("");
             }
         }
         
@@ -161,15 +170,20 @@ public class Game {
             if (boutton[0][i].getText()==boutton[1][i].getText() && boutton[1][i].getText()==boutton[2][i].getText()) {
                 if(boutton[0][i].getText().equals("X")){
                     score1++;
+                    setGoal(joueur1);
                 }
                 else{
                    score2++; 
+                   setGoal(joueur2);
                 }
-                for (int j = 0; j < boutton.length; j++) {
+                /*for (int j = 0; j < boutton.length; j++) {
                     setVainqueur(boutton[j][i]);
-                }
+                }*/
                 /*gameover=true;
                 return;*/
+                boutton[0][i].setText("");
+                boutton[1][i].setText("");
+                boutton[2][i].setText("");
             }
         }
         
@@ -177,15 +191,20 @@ public class Game {
         if (boutton[0][0].getText().equals(boutton[1][1].getText()) && boutton[1][1].getText().equals(boutton[2][2].getText()) && !boutton[0][0].getText().equals("")) {
             if(boutton[0][0].getText().equals("X")){
                 score1++;
+                setGoal(joueur1);
             }
             else{
-                score2++; 
+                score2++;
+                setGoal(joueur2);
             }
-            for (int j = 0; j < boutton.length; j++) {
+            /*for (int j = 0; j < boutton.length; j++) {
                 setVainqueur(boutton[j][j]);
-            }
+            }*/
             /*gameover=true;
             return;*/
+            boutton[0][0].setText("");
+            boutton[1][1].setText("");
+            boutton[2][2].setText("");
         }
 
         //on va verifier si soit les "X" ou les "O" on reussir a former une ligne diagonale secondaire alors celui la  sera le vainqueur
@@ -193,40 +212,86 @@ public class Game {
             int i=2;
             if(boutton[2][0].getText().equals("X")){
                 score1++; 
+                setGoal(joueur1);
             }
             else{
                 score2++; 
+                setGoal(joueur2);
             }
-            for (int j = 0; j < boutton.length; j++) {
+            /*for (int j = 0; j < boutton.length; j++) {
                 setVainqueur(boutton[i][j]);
                 i--;
-            }
+            }*/
             /*gameover=true;
             return;*/
+            boutton[2][0].setText("");
+            boutton[1][1].setText("");
+            boutton[0][2].setText("");
         }
         
-        if (turns==9) {
-            for (int i = 0; i < boutton.length; i++) {
-                for (int j = 0; j < boutton.length; j++) {
-                    setTile(boutton[i][j]);
-                }
-            }
-            /*gameover=true;
-            return;*/
-        } 
+        checkGridFull();
+        
+        
     }
     private void setVainqueur(JButton tile){
-            tile.setForeground(Color.GREEN);
+            /*tile.setForeground(Color.GREEN);
             tile.setBackground(Color.gray);
             text.setText(NomjoueurActuel +" is the Winner");
             text.setForeground(Color.GREEN);
+            score.setText("Player "+joueur1+ " Score:"+score1+"      Player  "+joueur2+ " Score:"+score2);*/
+    }
+    private void setGoal(String joueur){
             score.setText("Player "+joueur1+ " Score:"+score1+"      Player  "+joueur2+ " Score:"+score2);
-        }
+            showTemporaryMessage(frame,joueur +" set the gaol" , 2000);
+    }
    
     private void setTile(JButton tile){
         tile.setForeground(Color.red);
         tile.setBackground(Color.gray);
         text.setText("Game Over try again!!!");
 
+    }
+    private void checkGridFull(){
+        overcondition=true;
+        for (int i = 0; i < boutton.length; i++) {
+            for (int j = 0; j < boutton.length; j++) {
+                if(boutton[i][j].getText().equals("")){
+                    overcondition=false;
+                    break;
+                }
+            }
+            if (!overcondition){
+                break;
+            }
+        }
+        
+        if(overcondition){
+            for (int i = 0; i < boutton.length; i++) {
+                for (int j = 0; j < boutton.length; j++) {
+                     setTile(boutton[i][j]);
+                }
+            }
+            gameover = true; // ← empêche les autres actions après
+            text.setText("Game Over try again!!!"); // ← mieux ici pour plus de clarté
+        }
+        /*gameover=true;
+        return;*/
+    }
+    
+    public static void showTemporaryMessage(Component parent, String message, int durationMillis) {
+        JOptionPane optionPane = new JOptionPane(message, JOptionPane.INFORMATION_MESSAGE);
+        JDialog dialog = optionPane.createDialog(parent, "Info");
+
+        // Timer pour fermer la fenêtre automatiquement
+        new Timer().schedule(new TimerTask() {
+            public void run() {
+                dialog.setVisible(false);
+                dialog.dispose();
+            }
+        }, durationMillis);
+
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setModal(false); // optionnel : n'empêche pas l'utilisateur d'interagir avec le reste
+        dialog.setVisible(true);
     }
 }
